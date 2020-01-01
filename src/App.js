@@ -1,26 +1,237 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import "./App.css";
+import SignIn from "./components/SignIn";
+import NoteEditor from "./components/NoteEditor";
+import Sidebar from "./components/Sidebar";
+import Register from "./components/Register";
+import axios from "axios";
+import { Button } from "@material-ui/core";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      name: "",
+      email: "",
+      password: "",
+      notes: [],
+      selectedNote: null,
+      noteBody: "",
+      register: false,
+      loading: true
+    };
+  }
+
+  createNote = title => {
+    const token = localStorage.getItem("token");
+
+    axios
+      .post(
+        "https://ancient-headland-98480.herokuapp.com/api/notes/createNote",
+        { title, body: "New Note" },
+        { headers: { authToken: token } }
+      )
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({ notes: [...this.state.notes, res.data] });
+        } else {
+          alert("Note could note be created");
+        }
+      });
+  };
+
+  deleteNote = _id => {
+    const token = localStorage.getItem("token");
+    axios
+      .delete("https://ancient-headland-98480.herokuapp.com/api/notes/delete", {
+        headers: { authToken: token },
+        data: {
+          _id
+        }
+      })
+      .then(res => {
+        const newNotes = this.state.notes.filter(note => note._id !== _id);
+
+        this.setState({ notes: newNotes, selectedNote: null });
+      });
+  };
+
+  componentDidMount() {
+    const token = localStorage.getItem("token");
+    axios
+      .get("https://ancient-headland-98480.herokuapp.com/api/notes", {
+        headers: { authToken: token }
+      })
+      .then(res => {
+        if (res.data.notes) {
+          this.setState({ notes: res.data.notes, loading: false });
+        } else {
+          this.setState({ notes: [] });
+        }
+      });
+  }
+
+  signIn = () => {
+    const { email, password } = this.state;
+    axios
+      .post("https://ancient-headland-98480.herokuapp.com/api/user/login", {
+        email,
+        password
+      })
+      .then(res => {
+        if (res.status === 200) {
+          localStorage.setItem("token", res.data);
+          localStorage.setItem("signedIn", true);
+          this.setState({
+            signedIn: JSON.parse(localStorage.getItem("signedIn"))
+          });
+        } else {
+          alert(res.data);
+        }
+      });
+  };
+
+  createAccount = () => {
+    const { name, email, password } = this.state;
+    axios
+      .post("https://ancient-headland-98480.herokuapp.com/api/user", {
+        name,
+        email,
+        password
+      })
+      .then(res => {
+        if (res.status === 200) {
+          alert(
+            "Account was succesfully created, now login with your credentials"
+          );
+        } else {
+          alert("Account couldn't be created");
+        }
+      });
+  };
+
+  logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("signedIn");
+    window.location.reload();
+  };
+
+  saveNote = (body, _id) => {
+    axios
+      .patch(
+        "https://ancient-headland-98480.herokuapp.com/api/notes/update",
+        {
+          title: this.state.selectedNote.title,
+          body,
+          _id
+        },
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then(res => {
+        if (res.status === 200) {
+          const oldNote = this.state.notes.find(
+            note => note._id === res.data._id
+          );
+          const copyNotes = [...this.state.notes];
+          const index = copyNotes.indexOf(oldNote);
+          copyNotes[index] = res.data;
+          this.setState({ notes: copyNotes });
+        } else {
+          alert("Note could not be saved");
+        }
+      });
+  };
+
+  setEmail = email => {
+    this.setState({ email });
+  };
+
+  setPassword = password => {
+    this.setState({ password });
+  };
+
+  setName = name => {
+    this.setState({ name });
+  };
+
+  setSelectedNote = (title, body) => {
+    this.setState({ selectedNote: title, body });
+  };
+
+  setNotes = notes => {
+    this.setState({ notes });
+  };
+
+  setRegister = bool => {
+    this.setState({ register: bool });
+  };
+
+  selectNote = id => {
+    const selectedNote = this.state.notes.find(note => note._id === id);
+    this.setState({ selectedNote, noteBody: selectedNote.body });
+  };
+
+  render() {
+    return (
+      <div>
+        {localStorage.getItem("signedIn") === "true" ? (
+          <div style={{ position: "relative" }}>
+            <Button
+              color="secondary"
+              variant="contained"
+              style={{ position: "absolute", top: "0px", right: "0px" }}
+              onClick={() => this.logout()}
+            >
+              Logout
+            </Button>
+          </div>
+        ) : null}
+        <div style={{ display: "flex" }}>
+          {!localStorage.getItem("signedIn") ||
+          localStorage.getItem("signedIn") === false ? (
+            <div>
+              <SignIn
+                setEmail={this.setEmail}
+                setPassword={this.setPassword}
+                signIn={this.signIn}
+                setRegister={this.setRegister}
+              />
+            </div>
+          ) : (
+            <div style={{ height: "300px" }}>
+              <Sidebar
+                selectNote={this.selectNote}
+                createNote={this.createNote}
+                notes={this.state.notes}
+                deleteNote={this.deleteNote}
+                loading={this.state.loading}
+              />
+            </div>
+          )}
+
+          {this.state.selectedNote === null ? null : (
+            <div>
+              <NoteEditor
+                selectedNote={this.state.selectedNote}
+                setNoteBody={this.setNoteBody}
+                saveNote={this.saveNote}
+              />
+            </div>
+          )}
+          {(this.state.register === true &&
+            !localStorage.getItem("signedIn")) ||
+          localStorage.getItem("signedIn") === false ? (
+            <Register
+              setName={this.setName}
+              setEmail={this.setEmail}
+              setPassword={this.setPassword}
+              createAccount={this.createAccount}
+            />
+          ) : null}
+        </div>
+      </div>
+    );
+  }
 }
 
 export default App;

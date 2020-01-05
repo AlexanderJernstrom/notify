@@ -5,7 +5,9 @@ import NoteEditor from "./components/NoteEditor";
 import Sidebar from "./components/Sidebar";
 import Register from "./components/Register";
 import axios from "axios";
-import { Button } from "@material-ui/core";
+import { Button, Typography } from "@material-ui/core";
+import Description from "./components/Description";
+import { Image } from "@material-ui/icons";
 
 class App extends Component {
   constructor(props) {
@@ -58,17 +60,20 @@ class App extends Component {
 
   componentDidMount() {
     const token = localStorage.getItem("token");
-    axios
-      .get("https://ancient-headland-98480.herokuapp.com/api/notes", {
-        headers: { authToken: token }
-      })
-      .then(res => {
-        if (res.data.notes) {
-          this.setState({ notes: res.data.notes, loading: false });
-        } else {
-          this.setState({ notes: [] });
-        }
-      });
+
+    if (token) {
+      axios
+        .get("https://ancient-headland-98480.herokuapp.com/api/notes", {
+          headers: { authToken: token }
+        })
+        .then(res => {
+          if (res.data.notes) {
+            this.setState({ notes: res.data.notes, loading: false });
+          } else {
+            this.setState({ notes: [], loading: false });
+          }
+        });
+    }
   }
 
   signIn = () => {
@@ -189,16 +194,33 @@ class App extends Component {
         <div style={{ display: "flex" }}>
           {!localStorage.getItem("signedIn") ||
           localStorage.getItem("signedIn") === false ? (
-            <div>
-              <SignIn
-                setEmail={this.setEmail}
-                setPassword={this.setPassword}
-                signIn={this.signIn}
-                setRegister={this.setRegister}
-              />
+            <div style={{ width: "100%" }}>
+              <div className="section1">
+                <Typography variant="h1">Notify</Typography>
+                <Typography variant="h3"></Typography>
+                <div className="signInForm">
+                  <SignIn
+                    setEmail={this.setEmail}
+                    setPassword={this.setPassword}
+                    signIn={this.signIn}
+                    setRegister={this.setRegister}
+                  />
+                </div>
+                <div className="registerForm">
+                  <Register
+                    setName={this.setName}
+                    setEmail={this.setEmail}
+                    setPassword={this.setPassword}
+                    createAccount={this.createAccount}
+                  />
+                </div>
+              </div>
+              <div className="section2">
+                <Description className="description-text" />
+              </div>
             </div>
           ) : (
-            <div style={{ height: "300px" }}>
+            <div style={{ height: "20rem" }}>
               <Sidebar
                 selectNote={this.selectNote}
                 createNote={this.createNote}
@@ -218,16 +240,6 @@ class App extends Component {
               />
             </div>
           )}
-          {(this.state.register === true &&
-            !localStorage.getItem("signedIn")) ||
-          localStorage.getItem("signedIn") === false ? (
-            <Register
-              setName={this.setName}
-              setEmail={this.setEmail}
-              setPassword={this.setPassword}
-              createAccount={this.createAccount}
-            />
-          ) : null}
         </div>
       </div>
     );

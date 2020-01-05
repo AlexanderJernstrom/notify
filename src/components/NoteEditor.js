@@ -17,7 +17,7 @@ export default function NoteEditor(props) {
         width: "70%"
       }}
     >
-      <Container maxWidth="md" style={{}}>
+      <Container maxWidth="md">
         <Typography variant="h2">{props.selectedNote.title}</Typography>
         <form>
           <TextField
@@ -25,7 +25,9 @@ export default function NoteEditor(props) {
             fullWidth
             multiline
             value={body}
-            onChange={e => setBody(e.target.value)}
+            onChange={e => {
+              setBody(e.target.value);
+            }}
             rows={14}
           />
           <Button

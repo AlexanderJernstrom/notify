@@ -3,6 +3,7 @@ import TextField from "@material-ui/core/TextField";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
+import "../App.css";
 
 export default function SignIn(props) {
   return (
@@ -22,6 +23,7 @@ export default function SignIn(props) {
               variant="outlined"
               placeholder="enter your email"
               onChange={e => props.setEmail(e.target.value)}
+              className="inputs"
             />
             <TextField
               label="Password"
@@ -30,6 +32,7 @@ export default function SignIn(props) {
               type="password"
               margin="none"
               onChange={e => props.setPassword(e.target.value)}
+              className="inputs"
             />
             <Button
               variant="contained"
@@ -39,15 +42,6 @@ export default function SignIn(props) {
               Sign In
             </Button>
           </form>
-          <Button
-            style={{ width: "100%" }}
-            size="large"
-            variant="contained"
-            color="primary"
-            onClick={() => props.setRegister(true)}
-          >
-            Don't have an account? Register here
-          </Button>
         </Container>
       </div>
     </div>

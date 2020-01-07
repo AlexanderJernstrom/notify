@@ -28,9 +28,10 @@ export default function NoteEditor(props) {
         aria-describedby="simple-modal-description"
         open={open}
         onClose={() => handleClose()}
+        style={{ display: "flex", justifyContent: "center" }}
       >
-        <div style={{ backgroundColor: "white" }}>
-          <Typography style={{ fontSize: "7vw" }}>
+        <div style={{ backgroundColor: "white", width: "50%" }}>
+          <Typography style={{ fontSize: "6vw" }}>
             {props.selectedNote.title}
           </Typography>
           <form style={{ width: "100%" }}>

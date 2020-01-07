@@ -172,6 +172,9 @@ class App extends Component {
   };
 
   selectNote = id => {
+    if (id === null) {
+      this.setState({ selectedNote: null });
+    }
     const selectedNote = this.state.notes.find(note => note._id === id);
     this.setState({ selectedNote, noteBody: selectedNote.body });
   };
@@ -184,7 +187,6 @@ class App extends Component {
             <Button
               color="secondary"
               variant="contained"
-              style={{ position: "absolute", top: "0px", right: "0px" }}
               onClick={() => this.logout()}
             >
               Logout
@@ -237,6 +239,7 @@ class App extends Component {
                 selectedNote={this.state.selectedNote}
                 setNoteBody={this.setNoteBody}
                 saveNote={this.saveNote}
+                selectNote={this.selectNote}
               />
             </div>
           )}

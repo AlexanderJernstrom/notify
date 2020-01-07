@@ -25,36 +25,39 @@ export default function Sidebar(props) {
       }}
     >
       <Container maxWidth="sm">
-        <Typography variant="h4">Notes</Typography>
-        <List>
-          {props.loading === false ? (
-            props.notes.map(note => {
-              return (
-                <div key={note._id}>
-                  <ListItem
-                    alignItems="flex-start"
-                    style={{ cursor: "pointer", textAlign: "center" }}
-                    onClick={() => props.selectNote(note._id)}
-                    button
-                  >
-                    <ListItemText>{note.title}</ListItemText>
-                    <Button onClick={() => props.deleteNote(note._id)}>
-                      <Delete />
-                    </Button>
-                  </ListItem>
-                  <Divider />
-                </div>
-              );
-            })
-          ) : (
-            <Typography>loading notes...</Typography>
-          )}
-          {props.notes.length === 0 ? (
-            <Typography>
-              You dont have any notes, create a note by clicking the plus button
-            </Typography>
-          ) : null}
-        </List>
+        <div style={{ width: "80%" }}>
+          <Typography variant="h4">Notes</Typography>
+          <List>
+            {props.loading === false ? (
+              props.notes.map(note => {
+                return (
+                  <div key={note._id}>
+                    <ListItem
+                      alignItems="flex-start"
+                      style={{ cursor: "pointer", textAlign: "center" }}
+                      onClick={() => props.selectNote(note._id)}
+                      button
+                    >
+                      <ListItemText>{note.title}</ListItemText>
+                      <Button onClick={() => props.deleteNote(note._id)}>
+                        <Delete />
+                      </Button>
+                    </ListItem>
+                    <Divider />
+                  </div>
+                );
+              })
+            ) : (
+              <Typography>loading notes...</Typography>
+            )}
+            {props.notes.length === 0 ? (
+              <Typography>
+                You dont have any notes, create a note by clicking the plus
+                button
+              </Typography>
+            ) : null}
+          </List>
+        </div>
       </Container>
 
       {open === true ? (

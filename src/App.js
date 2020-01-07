@@ -59,21 +59,7 @@ class App extends Component {
   };
 
   componentDidMount() {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      axios
-        .get("https://ancient-headland-98480.herokuapp.com/api/notes", {
-          headers: { authToken: token }
-        })
-        .then(res => {
-          if (res.data.notes) {
-            this.setState({ notes: res.data.notes, loading: false });
-          } else {
-            this.setState({ notes: [], loading: false });
-          }
-        });
-    }
+    this.getNotes();
   }
 
   signIn = () => {
@@ -92,6 +78,23 @@ class App extends Component {
           });
         } else {
           alert(res.data);
+        }
+      });
+
+    setTimeout(() => this.getNotes(), 3000);
+  };
+
+  getNotes = () => {
+    const token = localStorage.getItem("token");
+    axios
+      .get("https://ancient-headland-98480.herokuapp.com/api/notes", {
+        headers: { authToken: token }
+      })
+      .then(res => {
+        if (res.data.notes) {
+          this.setState({ notes: res.data.notes, loading: false });
+        } else {
+          this.setState({ notes: [], loading: false });
         }
       });
   };
@@ -172,11 +175,12 @@ class App extends Component {
   };
 
   selectNote = id => {
-    if (id === null) {
-      this.setState({ selectedNote: null });
-    }
     const selectedNote = this.state.notes.find(note => note._id === id);
     this.setState({ selectedNote, noteBody: selectedNote.body });
+  };
+
+  clearSelectedNote = () => {
+    this.setState({ selectedNote: null });
   };
 
   render() {
@@ -239,7 +243,7 @@ class App extends Component {
                 selectedNote={this.state.selectedNote}
                 setNoteBody={this.setNoteBody}
                 saveNote={this.saveNote}
-                selectNote={this.selectNote}
+                clearSelectedNote={this.clearSelectedNote}
               />
             </div>
           )}

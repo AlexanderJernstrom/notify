@@ -14,6 +14,7 @@ export default function NoteEditor(props) {
   }, [props.selectedNote]);
 
   const handleClose = () => {
+    props.clearSelectedNote();
     setOpen(false);
   };
 
@@ -30,7 +31,7 @@ export default function NoteEditor(props) {
         onClose={() => handleClose()}
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <div style={{ backgroundColor: "white", width: "50%" }}>
+        <div style={{ backgroundColor: "white", width: "70%", height: "50%" }}>
           <Typography style={{ fontSize: "6vw" }}>
             {props.selectedNote.title}
           </Typography>

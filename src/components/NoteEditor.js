@@ -31,7 +31,14 @@ export default function NoteEditor(props) {
         onClose={() => handleClose()}
         style={{ display: "flex", justifyContent: "center" }}
       >
-        <div style={{ backgroundColor: "white", width: "70%", height: "50%" }}>
+        <div
+          style={{
+            backgroundColor: "white",
+            width: "70%",
+            height: "60%",
+            outline: "none"
+          }}
+        >
           <Typography style={{ fontSize: "6vw" }}>
             {props.selectedNote.title}
           </Typography>

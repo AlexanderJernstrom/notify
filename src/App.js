@@ -34,10 +34,10 @@ class App extends Component {
         { headers: { authToken: token } }
       )
       .then(res => {
-        if (res.status === 200) {
+        if (!res.data.errors) {
           this.setState({ notes: [...this.state.notes, res.data] });
         } else {
-          alert("Note could note be created");
+          alert("Title needs to be atlest 5 characters long");
         }
       });
   };
@@ -197,7 +197,7 @@ class App extends Component {
             </Button>
           </div>
         ) : null}
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", justifyContent: "center" }}>
           {!localStorage.getItem("signedIn") ||
           localStorage.getItem("signedIn") === false ? (
             <div style={{ width: "100%" }}>

@@ -5,7 +5,7 @@ import Modal from "@material-ui/core/Modal";
 import TextField from "@material-ui/core/TextField";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
-import { ListItemText, Container, Divider } from "@material-ui/core";
+import { ListItemText, Container, Divider, Card } from "@material-ui/core";
 import { Delete, AddCircle } from "@material-ui/icons";
 
 export default function Sidebar(props) {
@@ -21,42 +21,46 @@ export default function Sidebar(props) {
       style={{
         backgroundColor: "white",
         margin: "0",
-        padding: "0"
+        padding: "0",
+        height: "70%"
       }}
     >
-      <Container maxWidth="sm">
-        <div style={{ width: "80%" }}>
-          <Typography variant="h4">Notes</Typography>
-          <List>
-            {props.loading === false ? (
-              props.notes.map(note => {
-                return (
-                  <div key={note._id}>
-                    <ListItem
-                      alignItems="flex-start"
-                      style={{ cursor: "pointer", textAlign: "center" }}
-                      onClick={() => props.selectNote(note._id)}
-                      button
-                    >
-                      <ListItemText>{note.title}</ListItemText>
-                      <Button onClick={() => props.deleteNote(note._id)}>
-                        <Delete />
-                      </Button>
-                    </ListItem>
-                    <Divider />
-                  </div>
-                );
-              })
-            ) : (
-              <Typography>loading notes...</Typography>
-            )}
-            {props.notes.length === 0 ? (
-              <Typography>
-                You dont have any notes, create a note by clicking the plus
-                button
-              </Typography>
-            ) : null}
-          </List>
+      <Container maxWidth="md" style={{ textAlign: "center" }}>
+        <Typography variant="h4">Notes</Typography>
+        <div
+          style={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 2fr)"
+          }}
+        >
+          {props.loading === false ? (
+            props.notes.map(note => {
+              return (
+                <div key={note._id}>
+                  <Card
+                    style={{
+                      cursor: "pointer",
+                      textAlign: "center",
+                      height: "5.5em",
+                      width: "5em"
+                    }}
+                    onClick={() => props.selectNote(note._id)}
+                    button="true"
+                  >
+                    <Typography style={{ paddingBottom: "2rem" }}>
+                      {note.title}
+                    </Typography>
+                    <Button onClick={() => props.deleteNote(note._id)}>
+                      <Delete />
+                    </Button>
+                  </Card>
+                </div>
+              );
+            })
+          ) : (
+            <Typography>loading notes...</Typography>
+          )}
         </div>
       </Container>
 
@@ -72,7 +76,7 @@ export default function Sidebar(props) {
             height: "20%"
           }}
         >
-          <div>
+          <div style={{ outline: "none" }}>
             <div
               style={{
                 backgroundColor: "gray",
@@ -88,9 +92,9 @@ export default function Sidebar(props) {
             </div>
             <Button
               onClick={() => props.createNote(title)}
-              size="large"
               variant="contained"
               color="primary"
+              style={{ width: "100%" }}
             >
               Create your note
             </Button>

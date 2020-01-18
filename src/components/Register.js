@@ -5,9 +5,7 @@ import "../App.css";
 export default function Register(props) {
   return (
     <div>
-      <Typography variant="h2">
-        Don't have an account? Register a new account here
-      </Typography>
+      <Typography variant="h2">Register a new account</Typography>
       <Container maxWidth="xs">
         <form autoComplete="off">
           <TextField

@@ -41,6 +41,13 @@ export default function SignIn(props) {
             >
               Sign In
             </Button>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => props.scrollToRegister()}
+            >
+              Don't have an account? Register here
+            </Button>
           </form>
         </Container>
       </div>

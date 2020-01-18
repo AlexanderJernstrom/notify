@@ -5,9 +5,11 @@ import NoteEditor from "./components/NoteEditor";
 import Sidebar from "./components/Sidebar";
 import Register from "./components/Register";
 import axios from "axios";
-import { Button, Typography } from "@material-ui/core";
+import { Typography } from "@material-ui/core";
 import Description from "./components/Description";
-import { Image } from "@material-ui/icons";
+import { scroller } from "react-scroll";
+import Nav from "./components/Nav";
+import BottomNav from "./components/BottomNav";
 
 class App extends Component {
   constructor(props) {
@@ -19,10 +21,18 @@ class App extends Component {
       notes: [],
       selectedNote: null,
       noteBody: "",
-      register: false,
+
       loading: true
     };
   }
+
+  scrollToRegister = () => {
+    scroller.scrollTo("section3", {
+      duration: 800,
+      delay: 0,
+      smooth: "easeInQuart"
+    });
+  };
 
   createNote = title => {
     const token = localStorage.getItem("token");
@@ -187,14 +197,9 @@ class App extends Component {
     return (
       <div>
         {localStorage.getItem("signedIn") === "true" ? (
-          <div style={{ position: "relative" }}>
-            <Button
-              color="secondary"
-              variant="contained"
-              onClick={() => this.logout()}
-            >
-              Logout
-            </Button>
+          <div>
+            <Nav logout={this.logout} />
+            <BottomNav createNote={this.createNote} />
           </div>
         ) : null}
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -210,8 +215,14 @@ class App extends Component {
                     setPassword={this.setPassword}
                     signIn={this.signIn}
                     setRegister={this.setRegister}
+                    scrollToRegister={this.scrollToRegister}
                   />
                 </div>
+              </div>
+              <div className="section2">
+                <Description className="description-text" />
+              </div>
+              <div className="section3">
                 <div className="registerForm">
                   <Register
                     setName={this.setName}
@@ -221,18 +232,15 @@ class App extends Component {
                   />
                 </div>
               </div>
-              <div className="section2">
-                <Description className="description-text" />
-              </div>
             </div>
           ) : (
             <div style={{ height: "20rem" }}>
               <Sidebar
                 selectNote={this.selectNote}
-                createNote={this.createNote}
                 notes={this.state.notes}
                 deleteNote={this.deleteNote}
                 loading={this.state.loading}
+                clearSelectedNote={this.clearSelectedNote}
               />
             </div>
           )}

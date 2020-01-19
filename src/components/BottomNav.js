@@ -57,7 +57,10 @@ export default function BottomNav(props) {
               />
             </div>
             <Button
-              onClick={() => props.createNote(title)}
+              onClick={() => {
+                props.createNote(title);
+                setTimeout(1000, setOpen(false));
+              }}
               variant="contained"
               color="primary"
               style={{ width: "100%" }}

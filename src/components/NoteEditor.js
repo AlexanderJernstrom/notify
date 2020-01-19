@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import Container from "@material-ui/core/Container";
 import "../App.css";
 import { Typography, Button, TextField, Modal } from "@material-ui/core";
-import { Save } from "@material-ui/icons";
+import { Save, Cancel } from "@material-ui/icons";
 
 export default function NoteEditor(props) {
   const [body, setBody] = useState("");
@@ -28,20 +27,24 @@ export default function NoteEditor(props) {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
         open={open}
-        onClose={() => handleClose()}
         style={{ display: "flex", justifyContent: "center" }}
       >
         <div
           style={{
             backgroundColor: "white",
-            width: "70%",
-            height: "60%",
+            width: "100%",
             outline: "none"
           }}
         >
           <Typography style={{ fontSize: "6vw" }}>
             {props.selectedNote.title}
           </Typography>
+          <Button
+            onClick={() => handleClose()}
+            style={{ position: "absolute", top: "0px", right: "0px" }}
+          >
+            <Cancel color="error" />
+          </Button>
           <form style={{ width: "100%" }}>
             <TextField
               variant="outlined"
@@ -51,7 +54,7 @@ export default function NoteEditor(props) {
               onChange={e => {
                 setBody(e.target.value);
               }}
-              rows={14}
+              rows={20}
             />
             <Button
               color="primary"

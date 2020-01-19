@@ -33,8 +33,7 @@ export default function Sidebar(props) {
                     style={{
                       cursor: "pointer",
                       textAlign: "center",
-                      height: "5.5em",
-                      width: "5em"
+                      height: "5.5em"
                     }}
                     onClick={() => props.selectNote(note._id)}
                   >

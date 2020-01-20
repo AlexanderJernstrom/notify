@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import { ClipLoader } from "react-spinners";
 
-import { Container, Card } from "@material-ui/core";
+import { Container, Card, Dialog } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
 
 export default function Sidebar(props) {
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState("");
+
   return (
     <div
       style={{
@@ -35,15 +38,17 @@ export default function Sidebar(props) {
                       textAlign: "center",
                       height: "5.5em"
                     }}
-                    onClick={() => props.selectNote(note._id)}
                   >
-                    <Typography style={{ paddingBottom: "2rem" }}>
-                      {note.title}
-                    </Typography>
+                    <div onClick={() => props.selectNote(note._id)}>
+                      <Typography style={{ paddingBottom: "2rem" }}>
+                        {note.title}
+                      </Typography>
+                    </div>
+
                     <Button
                       onClick={() => {
-                        props.clearSelectedNote();
-                        props.deleteNote(note._id);
+                        setId(note._id);
+                        setOpen(true);
                       }}
                     >
                       <Delete />
@@ -57,6 +62,33 @@ export default function Sidebar(props) {
           )}
         </div>
       </Container>
+      <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">
+        <Typography variant="h3">
+          Are you sure you want to delete this note?
+        </Typography>
+        <div style={{ display: "flex" }}>
+          <Button
+            style={{ width: "50%" }}
+            onClick={() => {
+              setOpen(false);
+              setId("");
+            }}
+          >
+            <Typography>No</Typography>
+          </Button>
+          <Button
+            color="red"
+            style={{ width: "50%" }}
+            onClick={() => {
+              props.deleteNote(id);
+              setId("");
+              setOpen(false);
+            }}
+          >
+            <Typography color="error">Yes</Typography>
+          </Button>
+        </div>
+      </Dialog>
     </div>
   );
 }

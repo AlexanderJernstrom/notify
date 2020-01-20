@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-import { Typography, Button, TextField, Modal } from "@material-ui/core";
-import { Save, Cancel } from "@material-ui/icons";
+import {
+  Typography,
+  Button,
+  TextField,
+  Modal,
+  ButtonBase
+} from "@material-ui/core";
+import { Save, Cancel, Send } from "@material-ui/icons";
 
 export default function NoteEditor(props) {
   const [body, setBody] = useState("");
@@ -14,6 +20,7 @@ export default function NoteEditor(props) {
 
   const handleClose = () => {
     props.clearSelectedNote();
+    props.saveNote(body, props.selectedNote._id);
     setOpen(false);
   };
 
@@ -61,8 +68,14 @@ export default function NoteEditor(props) {
               variant="contained"
               onClick={() => props.saveNote(body, props.selectedNote._id)}
             >
-              Save your note
               <Save />
+            </Button>
+            <Button
+              href={`mailto:example@email.com?subject=${props.selectedNote.title}&body=${body}`}
+              color="primary"
+              variant="contained"
+            >
+              <Send />
             </Button>
           </form>{" "}
         </div>

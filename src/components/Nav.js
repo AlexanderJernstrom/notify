@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Button,
   Typography,
   Toolbar,
-  IconButton
+  IconButton,
+  Menu,
+  MenuItem
 } from "@material-ui/core";
 import { AccountCircle } from "@material-ui/icons";
 
 export default function Nav(props) {
+  const [open, setOpen] = useState(false);
+
   return (
     <AppBar position="static">
       <Toolbar variant="dense" style={{ position: "relative" }}>
@@ -21,7 +25,11 @@ export default function Nav(props) {
           >
             Logout
           </Button>
-          <IconButton>
+          <IconButton
+            onClick={e => {
+              setOpen(true);
+            }}
+          >
             <AccountCircle />
           </IconButton>
         </div>

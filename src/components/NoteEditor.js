@@ -5,13 +5,22 @@ import {
   Button,
   TextField,
   Modal,
-  ButtonBase
+  ButtonBase,
+  Menu,
+  MenuItem
 } from "@material-ui/core";
-import { Save, Cancel, Send } from "@material-ui/icons";
+import { Save, Cancel, Send, MoreVert } from "@material-ui/icons";
 
 export default function NoteEditor(props) {
   const [body, setBody] = useState("");
   const [open, setOpen] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [email, setEmail] = useState("");
+
+  const handleClick = e => {
+    setAnchorEl(e.currentTarget);
+  };
 
   useEffect(() => {
     setBody(props.selectedNote.body);
@@ -71,12 +80,52 @@ export default function NoteEditor(props) {
               <Save />
             </Button>
             <Button
-              href={`mailto:example@email.com?subject=${props.selectedNote.title}&body=${body}`}
-              color="primary"
               variant="contained"
+              color="primary"
+              onClick={e => {
+                setMenu(true);
+                handleClick(e);
+              }}
             >
-              <Send />
+              <MoreVert />
             </Button>
+            <Menu
+              open={menu}
+              onClose={() => {
+                setMenu(false);
+                setAnchorEl(null);
+              }}
+              anchorEl={anchorEl}
+            >
+              <Typography variant="h6">
+                Send note to another Notify user
+              </Typography>
+              <TextField
+                onChange={e => {
+                  setEmail(e.target.value);
+                }}
+                placeholder="Email of notify user"
+              />
+              <Button
+                onClick={() => {
+                  props.shareNote(props.selectedNote._id, email);
+                  setMenu(false);
+                }}
+              >
+                <Send />
+              </Button>
+
+              <Typography variant="h6">Send note via email</Typography>
+              <br />
+              <Button
+                href={`mailto:example@email.com?subject=${props.selectedNote.title}&body=${body}`}
+                color="primary"
+                variant="contained"
+                title="Send the note with email"
+              >
+                <Send />
+              </Button>
+            </Menu>
           </form>{" "}
         </div>
       </Modal>

@@ -34,6 +34,15 @@ class App extends Component {
     });
   };
 
+  shareNote = (_id, email) => {
+    axios
+      .post("https://ancient-headland-98480.herokuapp.com/api/notes/share", {
+        _id,
+        email
+      })
+      .then(res => alert(res.data));
+  };
+
   createNote = title => {
     const token = localStorage.getItem("token");
 
@@ -47,7 +56,7 @@ class App extends Component {
         if (!res.data.errors) {
           this.setState({ notes: [...this.state.notes, res.data] });
         } else {
-          alert("Title needs to be atlest 5 characters long");
+          alert(res.data.errors.title.message);
         }
       });
   };
@@ -252,6 +261,7 @@ class App extends Component {
                 setNoteBody={this.setNoteBody}
                 saveNote={this.saveNote}
                 clearSelectedNote={this.clearSelectedNote}
+                shareNote={this.shareNote}
               />
             </div>
           )}

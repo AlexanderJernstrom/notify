@@ -52,6 +52,9 @@ export default function NoteEditor(props) {
             outline: "none"
           }}
         >
+          {props.selectedNote.body !== body ? (
+            <Typography>Unsaved Changes</Typography>
+          ) : null}
           <Typography style={{ fontSize: "6vw" }}>
             {props.selectedNote.title}
           </Typography>

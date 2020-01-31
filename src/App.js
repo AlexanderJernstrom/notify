@@ -21,7 +21,6 @@ class App extends Component {
       notes: [],
       selectedNote: null,
       noteBody: "",
-
       loading: true
     };
   }
@@ -131,6 +130,13 @@ class App extends Component {
           alert(
             "Account was succesfully created, now login with your credentials"
           );
+          scroller.scrollTo("section1", {
+            duration: 800,
+            delay: 0,
+            smooth: "easeInQuart"
+          });
+
+          this.signIn();
         } else {
           alert("Account couldn't be created");
         }
@@ -189,10 +195,6 @@ class App extends Component {
     this.setState({ notes });
   };
 
-  setRegister = bool => {
-    this.setState({ register: bool });
-  };
-
   selectNote = id => {
     const selectedNote = this.state.notes.find(note => note._id === id);
     this.setState({ selectedNote, noteBody: selectedNote.body });
@@ -223,7 +225,6 @@ class App extends Component {
                     setEmail={this.setEmail}
                     setPassword={this.setPassword}
                     signIn={this.signIn}
-                    setRegister={this.setRegister}
                     scrollToRegister={this.scrollToRegister}
                   />
                 </div>

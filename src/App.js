@@ -10,6 +10,7 @@ import Description from "./components/Description";
 import { scroller } from "react-scroll";
 import Nav from "./components/Nav";
 import BottomNav from "./components/BottomNav";
+import ListEditor from "./components/ListEditor";
 
 class App extends Component {
   constructor(props) {
@@ -21,7 +22,9 @@ class App extends Component {
       notes: [],
       selectedNote: null,
       noteBody: "",
-      loading: true
+      loading: true,
+      lists: [],
+      selectedList: null
     };
   }
 
@@ -110,9 +113,13 @@ class App extends Component {
       })
       .then(res => {
         if (res.data.notes) {
-          this.setState({ notes: res.data.notes, loading: false });
+          this.setState({
+            notes: res.data.notes,
+            loading: false,
+            lists: res.data.lists
+          });
         } else {
-          this.setState({ notes: [], loading: false });
+          this.setState({ notes: [], lists: [], loading: false });
         }
       });
   };
@@ -203,6 +210,104 @@ class App extends Component {
   clearSelectedNote = () => {
     this.setState({ selectedNote: null });
   };
+  clearSelectedList = () => {
+    this.setState({ selectedList: null });
+  };
+
+  selectedList = id => {
+    const selectedList = this.state.lists.find(list => list._id === id);
+    this.setState({ selectedList });
+  };
+
+  changeCompleted = (listIndex, itemIndex) => {
+    const listCopy = [...this.state.lists];
+    listCopy[listIndex].items[itemIndex].completed = !listCopy[listIndex].items[
+      itemIndex
+    ].completed;
+    axios
+      .patch(
+        "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
+        {
+          _id: this.state.lists[listIndex]._id,
+          list: listCopy[listIndex]
+        },
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then(res => {
+        const copiedList = [...this.state.lists];
+        copiedList[listIndex] = res.data;
+        this.setState({ lists: copiedList });
+      });
+    this.selectedList(listCopy[listIndex]._id);
+  };
+
+  addItem = title => {
+    const lists = [...this.state.lists];
+    lists[lists.indexOf(this.state.selectedList)].items.push({
+      title,
+      completed: false
+    });
+    axios
+      .patch(
+        "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
+        {
+          _id: lists[lists.indexOf(this.state.selectedList)]._id,
+          list: lists[lists.indexOf(this.state.selectedList)]
+        },
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then(res => {
+        lists[lists.indexOf(this.state.selectedList)] = res.data;
+        this.setState({ lists });
+      });
+  };
+
+  deleteItem = (index, _id) => {
+    const individualList = this.state.lists.find(list => list._id === _id);
+    individualList.items.splice(index, 1);
+    axios
+      .patch(
+        "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
+        {
+          _id,
+          list: individualList
+        },
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then(res => {
+        const lists = [...this.state.lists];
+        console.log("Response from server", res.data);
+        lists[this.state.lists.indexOf(this.state.selectedList)] = res.data;
+        console.log("State lists", lists);
+        this.setState({ lists });
+      });
+  };
+
+  deleteList = _id => {
+    axios
+      .delete(
+        `https://ancient-headland-98480.herokuapp.com/api/lists/delete/${_id}`,
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then(res => {
+        const listCopy = this.state.lists.filter(list => list._id !== _id);
+
+        this.setState({ lists: listCopy });
+      });
+  };
+
+  createList = name => {
+    axios
+      .post(
+        "https://ancient-headland-98480.herokuapp.com/api/lists/create",
+        {
+          name,
+          items: []
+        },
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then(res => this.setState({ lists: [...this.state.lists, res.data] }));
+  };
 
   render() {
     return (
@@ -210,7 +315,10 @@ class App extends Component {
         {localStorage.getItem("signedIn") === "true" ? (
           <div>
             <Nav logout={this.logout} />
-            <BottomNav createNote={this.createNote} />
+            <BottomNav
+              createNote={this.createNote}
+              createList={this.createList}
+            />
           </div>
         ) : null}
         <div style={{ display: "flex", justifyContent: "center" }}>
@@ -251,6 +359,9 @@ class App extends Component {
                 deleteNote={this.deleteNote}
                 loading={this.state.loading}
                 clearSelectedNote={this.clearSelectedNote}
+                lists={this.state.lists}
+                selectList={this.selectedList}
+                deleteList={this.deleteList}
               />
             </div>
           )}
@@ -263,6 +374,18 @@ class App extends Component {
                 saveNote={this.saveNote}
                 clearSelectedNote={this.clearSelectedNote}
                 shareNote={this.shareNote}
+              />
+            </div>
+          )}
+          {this.state.selectedList === null ? null : (
+            <div>
+              <ListEditor
+                selectedList={this.state.selectedList}
+                changeCompleted={this.changeCompleted}
+                clearSelectedList={this.clearSelectedList}
+                lists={this.state.lists}
+                addItem={this.addItem}
+                deleteItem={this.deleteItem}
               />
             </div>
           )}

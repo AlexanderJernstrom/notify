@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-import {
-  Typography,
-  Button,
-  TextField,
-  Modal,
-  ButtonBase,
-  Menu,
-  MenuItem
-} from "@material-ui/core";
+import { Typography, Button, TextField, Modal, Menu } from "@material-ui/core";
 import { Save, Cancel, Send, MoreVert } from "@material-ui/icons";
 
 export default function NoteEditor(props) {
@@ -75,6 +67,7 @@ export default function NoteEditor(props) {
               }}
               rows={20}
             />
+
             <Button
               color="primary"
               variant="contained"

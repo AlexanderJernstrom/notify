@@ -61,6 +61,39 @@ export default function Sidebar(props) {
             <ClipLoader />
           )}
         </div>
+        <Typography variant="h4">Lists</Typography>
+        <div
+          style={{
+            width: "100%",
+            display: "grid",
+            gridTemplateColumns: " repeat(3, 3fr)",
+            alignItems: "stretch"
+          }}
+        >
+          {props.lists.map(list => {
+            return (
+              <Card
+                key={list._id}
+                style={{
+                  cursor: "pointer",
+                  textAlign: "center",
+                  height: "5.5em",
+                  width: "auto"
+                }}
+              >
+                <div
+                  style={{ paddingBottom: "2rem", textAlign: "center" }}
+                  onClick={() => props.selectList(list._id)}
+                >
+                  <Typography>{list.name}</Typography>
+                </div>
+                <Button onClick={() => props.deleteList(list._id)}>
+                  <Delete />
+                </Button>
+              </Card>
+            );
+          })}
+        </div>
       </Container>
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">
         <Typography variant="h3">

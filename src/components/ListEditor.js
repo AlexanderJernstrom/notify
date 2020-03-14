@@ -88,7 +88,7 @@ export default function ListEditor(props) {
             />
             <Button
               onClick={() => {
-                props.addItem(text);
+                props.addItem(text, props.selectedList._id);
                 setText("");
               }}
             >

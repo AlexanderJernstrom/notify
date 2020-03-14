@@ -103,6 +103,7 @@ class App extends Component {
       });
 
     setTimeout(() => this.getNotes(), 3000);
+    this.setState({ password: "", email: "" });
   };
 
   getNotes = () => {
@@ -241,24 +242,26 @@ class App extends Component {
     this.selectedList(listCopy[listIndex]._id);
   };
 
-  addItem = title => {
+  addItem = (title, id) => {
     const lists = [...this.state.lists];
-    lists[lists.indexOf(this.state.selectedList)].items.push({
+    const list = lists.find(list => list._id === id);
+    list.items.push({
       title,
       completed: false
     });
+
     axios
       .patch(
         "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
         {
-          _id: lists[lists.indexOf(this.state.selectedList)]._id,
-          list: lists[lists.indexOf(this.state.selectedList)]
+          _id: id,
+          list: list
         },
         { headers: { authToken: localStorage.getItem("token") } }
       )
       .then(res => {
         lists[lists.indexOf(this.state.selectedList)] = res.data;
-        this.setState({ lists });
+        this.setState({ lists, selectedList: res.data });
       });
   };
 
@@ -276,10 +279,8 @@ class App extends Component {
       )
       .then(res => {
         const lists = [...this.state.lists];
-        console.log("Response from server", res.data);
         lists[this.state.lists.indexOf(this.state.selectedList)] = res.data;
-        console.log("State lists", lists);
-        this.setState({ lists });
+        this.setState({ lists, selectedList: res.data });
       });
   };
 

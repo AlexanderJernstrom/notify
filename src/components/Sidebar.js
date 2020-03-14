@@ -25,38 +25,46 @@ export default function Sidebar(props) {
           style={{
             width: "100%",
             display: "grid",
-            gridTemplateColumns: "repeat(3, 2fr)"
+            textAlign: "center",
+            gridTemplateColumns: "repeat(3, auto)"
           }}
         >
           {props.loading === false ? (
-            props.notes.map(note => {
-              return (
-                <div key={note._id}>
-                  <Card
-                    style={{
-                      cursor: "pointer",
-                      textAlign: "center",
-                      height: "5.5em"
-                    }}
-                  >
-                    <div onClick={() => props.selectNote(note._id)}>
-                      <Typography style={{ paddingBottom: "2rem" }}>
-                        {note.title}
-                      </Typography>
-                    </div>
-
-                    <Button
-                      onClick={() => {
-                        setId(note._id);
-                        setOpen(true);
+            props.notes.length === 0 ? (
+              <Typography>
+                Seems you don't have any notes, create one in the bottom right
+                corner
+              </Typography>
+            ) : (
+              props.notes.map(note => {
+                return (
+                  <div key={note._id}>
+                    <Card
+                      style={{
+                        cursor: "pointer",
+                        textAlign: "center",
+                        height: "5.5em",
+                        margin: "0 0.5rem"
                       }}
                     >
-                      <Delete />
-                    </Button>
-                  </Card>
-                </div>
-              );
-            })
+                      <div onClick={() => props.selectNote(note._id)}>
+                        <Typography style={{ paddingBottom: "2rem" }}>
+                          {note.title}
+                        </Typography>
+                      </div>
+                      <Button
+                        onClick={() => {
+                          setId(note._id);
+                          setOpen(true);
+                        }}
+                      >
+                        <Delete />
+                      </Button>
+                    </Card>
+                  </div>
+                );
+              })
+            )
           ) : (
             <ClipLoader />
           )}
@@ -66,33 +74,40 @@ export default function Sidebar(props) {
           style={{
             width: "100%",
             display: "grid",
-            gridTemplateColumns: " repeat(3, 3fr)",
-            alignItems: "stretch"
+            gridTemplateColumns: " repeat(3, auto)"
           }}
         >
-          {props.lists.map(list => {
-            return (
-              <Card
-                key={list._id}
-                style={{
-                  cursor: "pointer",
-                  textAlign: "center",
-                  height: "5.5em",
-                  width: "auto"
-                }}
-              >
-                <div
-                  style={{ paddingBottom: "2rem", textAlign: "center" }}
-                  onClick={() => props.selectList(list._id)}
+          {props.lists.length === 0 && props.loading === false ? (
+            <Typography>
+              Seems you don't have any lists, create one in the bottom right
+              corner
+            </Typography>
+          ) : (
+            props.lists.map(list => {
+              return (
+                <Card
+                  key={list._id}
+                  style={{
+                    cursor: "pointer",
+                    textAlign: "center",
+                    height: "5.5em",
+                    width: "auto",
+                    margin: "0 0.5rem"
+                  }}
                 >
-                  <Typography>{list.name}</Typography>
-                </div>
-                <Button onClick={() => props.deleteList(list._id)}>
-                  <Delete />
-                </Button>
-              </Card>
-            );
-          })}
+                  <div
+                    style={{ paddingBottom: "2rem", textAlign: "center" }}
+                    onClick={() => props.selectList(list._id)}
+                  >
+                    <Typography>{list.name}</Typography>
+                  </div>
+                  <Button onClick={() => props.deleteList(list._id)}>
+                    <Delete />
+                  </Button>
+                </Card>
+              );
+            })
+          )}
         </div>
       </Container>
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">

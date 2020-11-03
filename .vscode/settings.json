@@ -1,0 +1,4 @@
+{
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "ms-vscode.vscode-typescript-tslint-plugin"
+}

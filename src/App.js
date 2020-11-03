@@ -11,6 +11,7 @@ import { scroller } from "react-scroll";
 import Nav from "./components/Nav";
 import BottomNav from "./components/BottomNav";
 import ListEditor from "./components/ListEditor";
+import { CollectionsBookmarkOutlined } from "@material-ui/icons";
 
 class App extends Component {
   constructor(props) {
@@ -24,7 +25,7 @@ class App extends Component {
       noteBody: "",
       loading: true,
       lists: [],
-      selectedList: null
+      selectedList: null,
     };
   }
 
@@ -32,7 +33,7 @@ class App extends Component {
     scroller.scrollTo("section3", {
       duration: 800,
       delay: 0,
-      smooth: "easeInQuart"
+      smooth: "easeInQuart",
     });
   };
 
@@ -40,12 +41,12 @@ class App extends Component {
     axios
       .post("https://ancient-headland-98480.herokuapp.com/api/notes/share", {
         _id,
-        email
+        email,
       })
-      .then(res => alert(res.data));
+      .then((res) => alert(res.data));
   };
 
-  createNote = title => {
+  createNote = (title) => {
     const token = localStorage.getItem("token");
 
     axios
@@ -54,7 +55,7 @@ class App extends Component {
         { title, body: "New Note" },
         { headers: { authToken: token } }
       )
-      .then(res => {
+      .then((res) => {
         if (!res.data.errors) {
           this.setState({ notes: [...this.state.notes, res.data] });
         } else {
@@ -63,19 +64,46 @@ class App extends Component {
       });
   };
 
-  deleteNote = _id => {
+  deleteNote = (_id) => {
     const token = localStorage.getItem("token");
     axios
       .delete("https://ancient-headland-98480.herokuapp.com/api/notes/delete", {
         headers: { authToken: token },
         data: {
-          _id
-        }
+          _id,
+        },
       })
-      .then(res => {
-        const newNotes = this.state.notes.filter(note => note._id !== _id);
+      .then((res) => {
+        const newNotes = this.state.notes.filter((note) => note._id !== _id);
 
         this.setState({ notes: newNotes, selectedNote: null });
+      });
+  };
+
+  deleteMultipleNotes = (ids) => {
+    const token = localStorage.getItem("token");
+    axios
+      .delete(
+        "https://ancient-headland-98480.herokuapp.com/api/notes/deleteMultiple",
+        {
+          headers: { authToken: token },
+          data: {
+            notes: ids,
+          },
+        }
+      )
+      .then(() => {
+        const notesCopy = [...this.state.notes];
+        const deleteIndexes = [];
+        ids.forEach((note) => {
+          const deleteItem = notesCopy.find((n) => n._id === note._id);
+          const index = notesCopy.indexOf(deleteItem);
+          deleteIndexes.push(index);
+        });
+        deleteIndexes.forEach((id) => {
+          notesCopy.splice(id, 1);
+        });
+        this.setState({ notes: notesCopy });
       });
   };
 
@@ -88,14 +116,14 @@ class App extends Component {
     axios
       .post("https://ancient-headland-98480.herokuapp.com/api/user/login", {
         email,
-        password
+        password,
       })
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           localStorage.setItem("token", res.data);
           localStorage.setItem("signedIn", true);
           this.setState({
-            signedIn: JSON.parse(localStorage.getItem("signedIn"))
+            signedIn: JSON.parse(localStorage.getItem("signedIn")),
           });
         } else {
           alert(res.data);
@@ -110,14 +138,14 @@ class App extends Component {
     const token = localStorage.getItem("token");
     axios
       .get("https://ancient-headland-98480.herokuapp.com/api/notes", {
-        headers: { authToken: token }
+        headers: { authToken: token },
       })
-      .then(res => {
+      .then((res) => {
         if (res.data.notes) {
           this.setState({
             notes: res.data.notes,
             loading: false,
-            lists: res.data.lists
+            lists: res.data.lists,
           });
         } else {
           this.setState({ notes: [], lists: [], loading: false });
@@ -131,9 +159,9 @@ class App extends Component {
       .post("https://ancient-headland-98480.herokuapp.com/api/user", {
         name,
         email,
-        password
+        password,
       })
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           alert(
             "Account was succesfully created, now login with your credentials"
@@ -141,7 +169,7 @@ class App extends Component {
           scroller.scrollTo("section1", {
             duration: 800,
             delay: 0,
-            smooth: "easeInQuart"
+            smooth: "easeInQuart",
           });
 
           this.signIn();
@@ -164,14 +192,14 @@ class App extends Component {
         {
           title: this.state.selectedNote.title,
           body,
-          _id
+          _id,
         },
         { headers: { authToken: localStorage.getItem("token") } }
       )
-      .then(res => {
+      .then((res) => {
         if (res.status === 200) {
           const oldNote = this.state.notes.find(
-            note => note._id === res.data._id
+            (note) => note._id === res.data._id
           );
           const copyNotes = [...this.state.notes];
           const index = copyNotes.indexOf(oldNote);
@@ -183,15 +211,15 @@ class App extends Component {
       });
   };
 
-  setEmail = email => {
+  setEmail = (email) => {
     this.setState({ email });
   };
 
-  setPassword = password => {
+  setPassword = (password) => {
     this.setState({ password });
   };
 
-  setName = name => {
+  setName = (name) => {
     this.setState({ name });
   };
 
@@ -199,12 +227,12 @@ class App extends Component {
     this.setState({ selectedNote: title, body });
   };
 
-  setNotes = notes => {
+  setNotes = (notes) => {
     this.setState({ notes });
   };
 
-  selectNote = id => {
-    const selectedNote = this.state.notes.find(note => note._id === id);
+  selectNote = (id) => {
+    const selectedNote = this.state.notes.find((note) => note._id === id);
     this.setState({ selectedNote, noteBody: selectedNote.body });
   };
 
@@ -215,8 +243,8 @@ class App extends Component {
     this.setState({ selectedList: null });
   };
 
-  selectedList = id => {
-    const selectedList = this.state.lists.find(list => list._id === id);
+  selectedList = (id) => {
+    const selectedList = this.state.lists.find((list) => list._id === id);
     this.setState({ selectedList });
   };
 
@@ -230,11 +258,11 @@ class App extends Component {
         "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
         {
           _id: this.state.lists[listIndex]._id,
-          list: listCopy[listIndex]
+          list: listCopy[listIndex],
         },
         { headers: { authToken: localStorage.getItem("token") } }
       )
-      .then(res => {
+      .then((res) => {
         const copiedList = [...this.state.lists];
         copiedList[listIndex] = res.data;
         this.setState({ lists: copiedList });
@@ -244,10 +272,10 @@ class App extends Component {
 
   addItem = (title, id) => {
     const lists = [...this.state.lists];
-    const list = lists.find(list => list._id === id);
+    const list = lists.find((list) => list._id === id);
     list.items.push({
       title,
-      completed: false
+      completed: false,
     });
 
     axios
@@ -255,59 +283,70 @@ class App extends Component {
         "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
         {
           _id: id,
-          list: list
+          list: list,
         },
         { headers: { authToken: localStorage.getItem("token") } }
       )
-      .then(res => {
+      .then((res) => {
         lists[lists.indexOf(this.state.selectedList)] = res.data;
         this.setState({ lists, selectedList: res.data });
       });
   };
 
   deleteItem = (index, _id) => {
-    const individualList = this.state.lists.find(list => list._id === _id);
+    const individualList = this.state.lists.find((list) => list._id === _id);
     individualList.items.splice(index, 1);
     axios
       .patch(
         "https://ancient-headland-98480.herokuapp.com/api/lists/edit",
         {
           _id,
-          list: individualList
+          list: individualList,
         },
         { headers: { authToken: localStorage.getItem("token") } }
       )
-      .then(res => {
+      .then((res) => {
         const lists = [...this.state.lists];
         lists[this.state.lists.indexOf(this.state.selectedList)] = res.data;
         this.setState({ lists, selectedList: res.data });
       });
   };
 
-  deleteList = _id => {
+  deleteList = (_id) => {
     axios
       .delete(
         `https://ancient-headland-98480.herokuapp.com/api/lists/delete/${_id}`,
         { headers: { authToken: localStorage.getItem("token") } }
       )
-      .then(res => {
-        const listCopy = this.state.lists.filter(list => list._id !== _id);
+      .then((res) => {
+        const listCopy = this.state.lists.filter((list) => list._id !== _id);
 
         this.setState({ lists: listCopy });
       });
   };
 
-  createList = name => {
+  createList = (name) => {
     axios
       .post(
         "https://ancient-headland-98480.herokuapp.com/api/lists/create",
         {
           name,
-          items: []
+          items: [],
         },
         { headers: { authToken: localStorage.getItem("token") } }
       )
-      .then(res => this.setState({ lists: [...this.state.lists, res.data] }));
+      .then((res) => this.setState({ lists: [...this.state.lists, res.data] }));
+  };
+
+  importRecipeToList = (url) => {
+    axios
+      .get(
+        `https://ancient-headland-98480.herokuapp.com/api/lists/importRecipe?recipeURL=${url}`,
+        { headers: { authToken: localStorage.getItem("token") } }
+      )
+      .then((res) => {
+        this.setState({ lists: [...this.state.lists, res.data] });
+      });
   };
 
   render() {
@@ -363,6 +402,8 @@ class App extends Component {
                 lists={this.state.lists}
                 selectList={this.selectedList}
                 deleteList={this.deleteList}
+                deleteMultipleNotes={this.deleteMultipleNotes}
+                importRecipe={this.importRecipeToList}
               />
             </div>
           )}

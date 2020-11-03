@@ -1,3 +1,8 @@
+body{
+  background-color: #F4F4F4;
+}
+
+
 .section1 {
   background-color: gray;
   width: 100%;
@@ -13,6 +18,8 @@
     ),
     linear-gradient(#eee 0.1em, transparent 0.1em);
   background-size: 100% 1.2em;
+
+  
 }
 
 .section2 {

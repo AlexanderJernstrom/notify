@@ -4,7 +4,7 @@ import {
   Fab,
   Modal,
   TextField,
-  Button
+  Button,
 } from "@material-ui/core";
 import { Add, ListAlt, Note } from "@material-ui/icons";
 
@@ -20,13 +20,20 @@ export default function BottomNav(props) {
 
   return (
     <div>
-      <BottomNavigation style={{ width: "100%", position: "fixed", bottom: 0 }}>
+      <BottomNavigation
+        style={{
+          width: "100%",
+          position: "fixed",
+          bottom: 0,
+          backgroundColor: "transparent",
+        }}
+      >
         <Fab
           color="secondary"
           style={{ position: "absolute", right: "0px" }}
           size="large"
           title="Add a new note"
-          onClick={e => setButtonOpen(true)}
+          onClick={(e) => setButtonOpen(true)}
         >
           <Add fontSize="large" />
         </Fab>
@@ -51,7 +58,7 @@ export default function BottomNav(props) {
           style={{
             display: "flex",
             justifyContent: "center",
-            height: "20%"
+            height: "20%",
           }}
         >
           <div style={{ outline: "none" }}>
@@ -59,13 +66,13 @@ export default function BottomNav(props) {
               style={{
                 backgroundColor: "gray",
                 display: "flex",
-                justifyContent: "center"
+                justifyContent: "center",
               }}
             >
               <TextField
                 variant="filled"
                 label="Title of your list"
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <Button
@@ -94,7 +101,7 @@ export default function BottomNav(props) {
           style={{
             display: "flex",
             justifyContent: "center",
-            height: "20%"
+            height: "20%",
           }}
         >
           <div style={{ outline: "none" }}>
@@ -102,13 +109,13 @@ export default function BottomNav(props) {
               style={{
                 backgroundColor: "gray",
                 display: "flex",
-                justifyContent: "center"
+                justifyContent: "center",
               }}
             >
               <TextField
                 variant="filled"
                 label="Title of your note"
-                onChange={e => setTitle(e.target.value)}
+                onChange={(e) => setTitle(e.target.value)}
               />
             </div>
             <Button

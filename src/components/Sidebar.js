@@ -1,22 +1,45 @@
 import React, { useState } from "react";
 import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
+import { Button, Checkbox, Menu, MenuItem } from "@material-ui/core";
 import { ClipLoader } from "react-spinners";
 
 import { Container, Card, Dialog } from "@material-ui/core";
-import { Delete } from "@material-ui/icons";
+import { Delete, MoreVert } from "@material-ui/icons";
+
+import { SelectedCardsMenu } from "./SelectedCardsMenu";
+import { ImportRecipe } from "./ImportRecipe";
 
 export default function Sidebar(props) {
   const [open, setOpen] = useState(false);
   const [id, setId] = useState("");
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const selectCards = (e, note) => {
+    if (e.target.checked === true) {
+      setSelectedCards([...selectedCards, note]);
+    } else if (e.target.checked === false) {
+      const selectedCardsCopy = [...selectedCards];
+      const newSelected = selectedCardsCopy.filter(
+        (cards) => note._id !== cards._id
+      );
+      setSelectedCards(newSelected);
+    }
+  };
+
+  const isSelected = (_id) => {
+    if (selectedCards.find((note) => note._id === _id) !== undefined)
+      return true;
+    else return false;
+  };
 
   return (
     <div
       style={{
-        backgroundColor: "white",
+        backgroundColor: "transparent",
         margin: "0",
         padding: "0",
-        height: "70%"
+        height: "70%",
       }}
     >
       <Container maxWidth="md" style={{ textAlign: "center" }}>
@@ -26,7 +49,7 @@ export default function Sidebar(props) {
             width: "100%",
             display: "grid",
             textAlign: "center",
-            gridTemplateColumns: "repeat(3, auto)"
+            gridTemplateColumns: "repeat(3, auto)",
           }}
         >
           {props.loading === false ? (
@@ -36,7 +59,7 @@ export default function Sidebar(props) {
                 corner
               </Typography>
             ) : (
-              props.notes.map(note => {
+              props.notes.map((note) => {
                 return (
                   <div key={note._id}>
                     <Card
@@ -44,7 +67,11 @@ export default function Sidebar(props) {
                         cursor: "pointer",
                         textAlign: "center",
                         height: "5.5em",
-                        margin: "0 0.5rem"
+                        margin: "0 0.5rem",
+                        border:
+                          isSelected(note._id) === true
+                            ? "2px solid blue"
+                            : "none",
                       }}
                     >
                       <div onClick={() => props.selectNote(note._id)}>
@@ -52,14 +79,45 @@ export default function Sidebar(props) {
                           {note.title}
                         </Typography>
                       </div>
-                      <Button
-                        onClick={() => {
-                          setId(note._id);
-                          setOpen(true);
+                      <Menu
+                        anchorEl={anchorEl}
+                        open={Boolean(anchorEl)}
+                        onClose={(e) => setAnchorEl(null)}
+                        id="menu"
+                      >
+                        <MenuItem
+                          onClick={() => {
+                            setId(note._id);
+                            setOpen(true);
+                            setAnchorEl(null);
+                          }}
+                        >
+                          Delete note
+                        </MenuItem>
+                      </Menu>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          padding: "0px",
                         }}
                       >
-                        <Delete />
-                      </Button>
+                        <Checkbox
+                          color="primary"
+                          onChange={(e) => selectCards(e, note)}
+                        />
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={(e) => setAnchorEl(e.currentTarget)}
+                          style={{
+                            height: "1.5rem",
+                            width: "1.5rem",
+                          }}
+                        >
+                          <MoreVert />
+                        </Button>
+                      </div>
                     </Card>
                   </div>
                 );
@@ -74,7 +132,7 @@ export default function Sidebar(props) {
           style={{
             width: "100%",
             display: "grid",
-            gridTemplateColumns: " repeat(3, auto)"
+            gridTemplateColumns: " repeat(3, auto)",
           }}
         >
           {props.lists.length === 0 && props.loading === false ? (
@@ -83,7 +141,7 @@ export default function Sidebar(props) {
               corner
             </Typography>
           ) : (
-            props.lists.map(list => {
+            props.lists.map((list) => {
               return (
                 <Card
                   key={list._id}
@@ -92,7 +150,7 @@ export default function Sidebar(props) {
                     textAlign: "center",
                     height: "5.5em",
                     width: "auto",
-                    margin: "0 0.5rem"
+                    margin: "0 0.5rem",
                   }}
                 >
                   <div
@@ -110,6 +168,14 @@ export default function Sidebar(props) {
           )}
         </div>
       </Container>
+      {selectedCards.length > 0 ? (
+        <SelectedCardsMenu
+          selectedCards={selectedCards.map((card) => {
+            return { _id: card._id };
+          })}
+          deleteMultipleNotes={props.deleteMultipleNotes}
+        />
+      ) : null}
       <Dialog open={open} onClose={() => setOpen(false)} maxWidth="lg">
         <Typography variant="h3">
           Are you sure you want to delete this note?
@@ -137,6 +203,7 @@ export default function Sidebar(props) {
           </Button>
         </div>
       </Dialog>
+      <ImportRecipe importRecipe={props.importRecipe} />
     </div>
   );
 }

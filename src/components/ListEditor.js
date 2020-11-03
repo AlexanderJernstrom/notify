@@ -4,7 +4,7 @@ import {
   Modal,
   Checkbox,
   Button,
-  TextField
+  TextField,
 } from "@material-ui/core";
 import { Cancel } from "@material-ui/icons";
 
@@ -13,7 +13,7 @@ export default function ListEditor(props) {
   const [text, setText] = useState("");
 
   const handleChange = (e, index, _id) => {
-    const list = props.lists.find(list => list._id === _id);
+    const list = props.lists.find((list) => list._id === _id);
     props.changeCompleted(props.lists.indexOf(list), index);
   };
 
@@ -40,7 +40,8 @@ export default function ListEditor(props) {
             display: "flex",
             flexDirection: "column",
             alignContent: "center",
-            textAlign: "center"
+            textAlign: "center",
+            overflowY: "scroll",
           }}
         >
           <Typography variant="h3">{props.selectedList.name}</Typography>
@@ -51,18 +52,20 @@ export default function ListEditor(props) {
                 style={{
                   width: "100%",
                   display: "flex",
-                  justifyContent: "space-evenly"
+                  justifyContent: "space-evenly",
                 }}
               >
                 <Checkbox
                   color="primary"
                   checked={item.completed}
-                  onChange={e => handleChange(e, index, props.selectedList._id)}
+                  onChange={(e) =>
+                    handleChange(e, index, props.selectedList._id)
+                  }
                 />
                 <Typography
                   style={{
                     textDecoration: item.completed ? "line-through" : "none",
-                    flex: 1
+                    flex: 1,
                   }}
                 >
                   {item.title}
@@ -84,7 +87,7 @@ export default function ListEditor(props) {
               variant="outlined"
               placeholder="Name of item"
               value={text}
-              onChange={e => setText(e.target.value)}
+              onChange={(e) => setText(e.target.value)}
             />
             <Button
               onClick={() => {

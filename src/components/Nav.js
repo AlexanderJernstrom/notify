@@ -22,7 +22,10 @@ export default function Nav(props) {
             Logout
           </Button>
           <IconButton>
-            <AccountCircle />
+            <AccountCircle>
+            
+            </AccountCircle>
+            
           </IconButton>
         </div>
       </Toolbar>

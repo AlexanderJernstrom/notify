@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-import { Typography, Button, TextField, Modal, Menu } from "@material-ui/core";
+import {
+  Typography,
+  Button,
+  TextField,
+  Modal,
+  Menu,
+  MenuItem,
+} from "@material-ui/core";
 import { Save, Cancel, Send, MoreVert } from "@material-ui/icons";
+import axios from "axios";
 
 export default function NoteEditor(props) {
   const [body, setBody] = useState("");
@@ -9,8 +17,9 @@ export default function NoteEditor(props) {
   const [menu, setMenu] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [email, setEmail] = useState("");
+  const [users, setUsers] = useState([]);
 
-  const handleClick = e => {
+  const handleClick = (e) => {
     setAnchorEl(e.currentTarget);
   };
 
@@ -28,7 +37,7 @@ export default function NoteEditor(props) {
   return (
     <div
       style={{
-        width: "70%"
+        width: "70%",
       }}
     >
       <Modal
@@ -41,7 +50,7 @@ export default function NoteEditor(props) {
           style={{
             backgroundColor: "white",
             width: "100%",
-            outline: "none"
+            outline: "none",
           }}
         >
           {props.selectedNote.body !== body ? (
@@ -62,7 +71,7 @@ export default function NoteEditor(props) {
               fullWidth
               multiline
               value={body}
-              onChange={e => {
+              onChange={(e) => {
                 setBody(e.target.value);
               }}
               rows={20}
@@ -78,7 +87,7 @@ export default function NoteEditor(props) {
             <Button
               variant="contained"
               color="primary"
-              onClick={e => {
+              onClick={(e) => {
                 setMenu(true);
                 handleClick(e);
               }}
@@ -96,13 +105,24 @@ export default function NoteEditor(props) {
               <Typography variant="h6">
                 Send note to another Notify user
               </Typography>
-              <TextField
-                onChange={e => {
-                  setEmail(e.target.value);
+              <div>
+              <input
+                list="users"
+                onChange={(e) => {
+                  if (e.target.value !== "") {
+                    axios
+                      .get(
+                        `https://ancient-headland-98480.herokuapp.com/api/user/search/${e.target.value}`
+                      )
+                      .then((data) => {
+                        setUsers(data.data);
+                      });
+                  }
                 }}
+                id="users"
                 placeholder="Email of notify user"
               />
-              <Button
+               <Button
                 onClick={() => {
                   props.shareNote(props.selectedNote._id, email);
                   setMenu(false);
@@ -110,6 +130,15 @@ export default function NoteEditor(props) {
               >
                 <Send />
               </Button>
+              
+              <datalist id="users" style={{ display: "block"}}>
+                {users.map((user) => {
+                  return <option value={user.email}>{user.name}</option>;
+                })}
+              </datalist>
+              </div>
+              
+             
 
               <Typography variant="h6">Send note via email</Typography>
               <br />
